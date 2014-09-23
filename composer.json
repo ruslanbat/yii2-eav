@@ -1,0 +1,19 @@
+{
+    "name": "asdf-studio/yii2-eav",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pavel Kilin",
+            "email": "pavel@asdf404.net"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+
+    },
+    "autoload": {
+        "psr-4": {
+            "asdfstudio\\eav\\": ""
+        }
+    }
+}
