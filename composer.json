@@ -1,6 +1,6 @@
 {
-    "name": "yii2-eav/yii2-eav",
-    "version":"1.0.0",
+    "name": "ruslanbat/yii2-eav",
+    "version":"1.0.1",
     "license": "MIT",
     "minimum-stability": "stable",
     "authors": [
