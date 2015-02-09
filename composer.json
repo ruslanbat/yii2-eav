@@ -1,11 +1,14 @@
 {
-    "name": "asdf-studio/yii2-eav",
+    "name": "yii2-eav/yii2-eav",
     "license": "MIT",
     "authors": [
         {
             "name": "Pavel Kilin",
             "email": "pavel@asdf404.net"
-        }
+        }, {
+            "name": "Ruslan Bat",
+            "email": "ruslan@bat.if.ua"
+        },
     ],
     "minimum-stability": "dev",
     "require": {
@@ -13,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "asdfstudio\\eav\\": ""
+            "app\\components\\": ""
         }
     }
 }
