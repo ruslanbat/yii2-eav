@@ -18,15 +18,10 @@ class MyModel extends ActiveRecord {
 
     public function init() {
         parent::init();
-        print_r($this->properties); // show properties as array
+        print_r($this->properties); // show properties as object
 
-        $this->properties = [
-            'foo' => 'foo',
-            'bar' => [1, 2, 3],
-            'test' => [
-                'foo' => 'bar',
-            ]
-        ];
+        $this->properties->foo = 'foo';
+        $this->properties->bar = 'bar';
     }
 }
 ```
