@@ -2,6 +2,7 @@
     "name": "yii2-eav/yii2-eav",
     "version":"1.0.0",
     "license": "MIT",
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Pavel Kilin",
