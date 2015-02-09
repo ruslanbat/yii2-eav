@@ -1,7 +1,7 @@
 <?php
 
 
-namespace asdfstudio\eav;
+namespace app\components;
 
 
 use Yii;
@@ -19,14 +19,29 @@ class EavBehavior extends Behavior
 {
     /**
      * EAV properties
-     * @var array
+     * @var object
      */
-    public $properties = [];
+    public $properties;
     /**
      * Primary key for getting extended attributes
      * @var string
      */
     public $primaryKey = 'id';
+    /**
+     * Properties key for getting extended attributes
+     * @var string
+     */ 
+    public $propertiesKey = 'id'
+    /**
+     * Properties field with attributes name
+     * @var string
+     */ 
+    public $propertiesName = 'name'
+    /**
+     * Properties field with attributes name
+     * @var string
+     */ 
+    public $propertiesValue = 'value'
     /**
      * Table name for storing extended attributes
      * @var string
@@ -48,14 +63,14 @@ class EavBehavior extends Behavior
      */
     public function afterFind()
     {
-        $properties = [];
+        $properties = (object) [];
         $query = new Query();
         $query->select('name, value');
         $query->from($this->tableName);
         $query->where([$this->primaryKey => $this->owner->{$this->primaryKey}]);
 
         foreach ($query->all() as $property) {
-            $properties[$property['name']] = Json::decode($property['value']);
+            $properties->{$property['name']} = $property['value'];
         }
         $this->properties = $properties;
     }
@@ -79,13 +94,13 @@ class EavBehavior extends Behavior
         $properties = [];
         foreach ($this->properties as $name => $value) {
             $properties[] = [
-                'model_id' => $this->owner->{$this->primaryKey},
-                'name' => $name,
-                'value' => Json::encode($value),
+                $this->propertiesKey => $this->owner->{$this->primaryKey},
+                $this->propertiesName => $name,
+                $this->propertiesValue => $value,
             ];
         }
         Yii::$app->db->createCommand()
-            ->batchInsert($this->tableName, ['model_id' => 'model_id', 'name' => 'name', 'value' => 'value'], $properties)
+            ->batchInsert($this->tableName, [$this->propertiesKey => $this->propertiesKey, $this->propertiesName => $this->propertiesName, $this->propertiesValue => $this->propertiesValue], $properties)
             ->execute();
     }
 
