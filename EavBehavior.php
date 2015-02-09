@@ -38,7 +38,7 @@ class EavBehavior extends Behavior
      */ 
     public $propertiesName = 'name';
     /**
-     * Properties field with attributes name
+     * Properties field with attributes value
      * @var string
      */ 
     public $propertiesValue = 'value';
