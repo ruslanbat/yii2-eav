@@ -11,7 +11,7 @@
             "email": "ruslan@bat.if.ua"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "master",
     "require": {
 
     },
