@@ -31,17 +31,17 @@ class EavBehavior extends Behavior
      * Properties key for getting extended attributes
      * @var string
      */ 
-    public $propertiesKey = 'id'
+    public $propertiesKey = 'id';
     /**
      * Properties field with attributes name
      * @var string
      */ 
-    public $propertiesName = 'name'
+    public $propertiesName = 'name';
     /**
      * Properties field with attributes name
      * @var string
      */ 
-    public $propertiesValue = 'value'
+    public $propertiesValue = 'value';
     /**
      * Table name for storing extended attributes
      * @var string
