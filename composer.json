@@ -5,10 +5,11 @@
         {
             "name": "Pavel Kilin",
             "email": "pavel@asdf404.net"
-        }, {
+        },
+        {
             "name": "Ruslan Bat",
             "email": "ruslan@bat.if.ua"
-        },
+        }
     ],
     "minimum-stability": "dev",
     "require": {
