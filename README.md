@@ -12,6 +12,10 @@ class MyModel extends ActiveRecord {
                 'class' => EavBehavior::className(),
                 'primaryKey' => 'id', // id related to model
                 'tableName' => 'my_model_properties', // table name for store attributes
+                'propertiesKey' => 'id', // id related to properties model
+                'propertiesName' => 'name', // Properties field with attributes name
+                'propertiesValue' => 'value', // Properties field with attributes value
+                
             ],
         ];
     }
