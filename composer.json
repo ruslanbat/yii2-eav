@@ -1,6 +1,6 @@
 {
-    "name": "ruslanbat/yii2-eav",
-    "version":"1.0.2",
+    "name": "asdf-studio/yii2-eav",
+    "version":"1.0.3",
     "license": "MIT",
     "minimum-stability": "stable",
     "authors": [
@@ -18,7 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "app\\components\\": ""
+            "asdfstudio\\eav\\": ""
         }
     }
 }
