@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\components;
+namespace asdfstudio\eav;
 
 
 use Yii;
@@ -19,9 +19,9 @@ class EavBehavior extends Behavior
 {
     /**
      * EAV properties
-     * @var object
+     * @var array
      */
-    public $properties;
+    public $properties = [];
     /**
      * Primary key for getting extended attributes
      * @var string
@@ -92,16 +92,18 @@ class EavBehavior extends Behavior
     {
         $this->deleteAll();
         $properties = [];
-        foreach ($this->properties as $name => $value) {
-            $properties[] = [
-                $this->propertiesKey => $this->owner->{$this->primaryKey},
-                $this->propertiesName => $name,
-                $this->propertiesValue => $value,
-            ];
+        if($this->properties){
+            foreach ($this->properties as $name => $value) {
+                $properties[] = [
+                    $this->propertiesKey => $this->owner->{$this->primaryKey},
+                    $this->propertiesName => $name,
+                    $this->propertiesValue => $value,
+                ];
+            }
+            Yii::$app->db->createCommand()
+                ->batchInsert($this->tableName, [$this->propertiesKey => $this->propertiesKey, $this->propertiesName => $this->propertiesName, $this->propertiesValue => $this->propertiesValue], $properties)
+                ->execute();
         }
-        Yii::$app->db->createCommand()
-            ->batchInsert($this->tableName, [$this->propertiesKey => $this->propertiesKey, $this->propertiesName => $this->propertiesName, $this->propertiesValue => $this->propertiesValue], $properties)
-            ->execute();
     }
 
     /**
