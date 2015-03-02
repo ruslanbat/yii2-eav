@@ -70,7 +70,9 @@ class EavBehavior extends Behavior
         $query->where([$this->primaryKey => $this->owner->{$this->primaryKey}]);
 
         foreach ($query->all() as $property) {
-            $properties->{$property['name']} = $property['value'];
+            if(!empty($property['name'])){
+                $properties->{$property['name']} = $property['value'];
+            }
         }
         $this->properties = $properties;
     }
