@@ -102,9 +102,11 @@ class EavBehavior extends Behavior
                     $this->propertiesValue => $value,
                 ];
             }
-            Yii::$app->db->createCommand()
+            if($properties){
+                Yii::$app->db->createCommand()
                 ->batchInsert($this->tableName, [$this->propertiesKey => $this->propertiesKey, $this->propertiesName => $this->propertiesName, $this->propertiesValue => $this->propertiesValue], $properties)
-                ->execute();
+                ->execute(); 
+            }
         }
     }
 
