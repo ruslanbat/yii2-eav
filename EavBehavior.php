@@ -3,7 +3,7 @@
 
 namespace asdfstudio\eav;
 
-
+use ArrayObject;
 use Yii;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
@@ -63,7 +63,9 @@ class EavBehavior extends Behavior
      */
     public function afterFind()
     {
-        $properties = (object) [];
+        $this->properties = new ArrayObject();
+        $this->properties ->setFlags(ArrayObject::STD_PROP_LIST|ArrayObject::ARRAY_AS_PROPS);
+
         $query = new Query();
         $query->select('name, value');
         $query->from($this->tableName);
@@ -71,10 +73,9 @@ class EavBehavior extends Behavior
 
         foreach ($query->all() as $property) {
             if(!empty($property['name'])){
-                $properties->{$property['name']} = $property['value'];
+                $this->properties->{$property['name']} = $property['value'];
             }
-        }
-        $this->properties = $properties;
+        } 
     }
 
     /**
