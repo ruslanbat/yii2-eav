@@ -1,6 +1,5 @@
 <?php
 
-
 namespace asdfstudio\eav;
 
 use ArrayObject;
@@ -19,9 +18,9 @@ class EavBehavior extends Behavior
 {
     /**
      * EAV properties
-     * @var array
+     * @var object
      */
-    public $properties = [];
+    public $properties;
     /**
      * Primary key for getting extended attributes
      * @var string
@@ -117,5 +116,13 @@ class EavBehavior extends Behavior
     public function afterDelete()
     {
         $this->deleteAll();
-    }
+    } 
+    /**
+     * Replace properties from array
+     */
+    public function replaceProperties($properties)
+    {
+        $new_properties = array_merge($this->properties->getArrayCopy(), $properties);
+        $this->properties->exchangeArray($new_properties); 
+    }  
 }

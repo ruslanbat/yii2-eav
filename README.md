@@ -22,10 +22,17 @@ class MyModel extends ActiveRecord {
 
     public function init() {
         parent::init();
-        print_r($this->properties); // show properties as object
+        print_r($this->properties); // show properties as ArrayObject
 
         $this->properties->foo = 'foo';
         $this->properties->bar = 'bar';
+
+        $this->properties['arrfoo'] = 'foo';
+        $this->properties['arrbar'] = 'bar';
+
+        $value_in_array = array('in_arr1' => 'value_arr1', 'in_arr2' => 'value_arr2');
+        //this method marge exist properties with properties from $value_in_array
+        $this->replaceProperties($value_in_array);
     }
 }
 ```
