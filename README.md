@@ -31,8 +31,11 @@ class MyModel extends ActiveRecord {
         $this->properties['arrbar'] = 'bar';
 
         $value_in_array = array('in_arr1' => 'value_arr1', 'in_arr2' => 'value_arr2');
-        //this method marge exist properties with properties from $value_in_array
+        // This method marge exist properties with properties from $value_in_array
         $this->replaceProperties($value_in_array);
+
+        // Returns the propertie values that have been modified since they are loaded or saved most recently.
+        print_r($this->dirtyProperties);
     }
 }
 ```

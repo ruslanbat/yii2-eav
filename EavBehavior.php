@@ -21,31 +21,43 @@ class EavBehavior extends Behavior
      * @var object
      */
     public $properties;
+    
     /**
      * Primary key for getting extended attributes
      * @var string
      */
     public $primaryKey = 'id';
+
     /**
      * Properties key for getting extended attributes
      * @var string
      */ 
     public $propertiesKey = 'id';
+
     /**
      * Properties field with attributes name
      * @var string
      */ 
     public $propertiesName = 'name';
+
     /**
      * Properties field with attributes value
      * @var string
      */ 
     public $propertiesValue = 'value';
+
     /**
      * Table name for storing extended attributes
      * @var string
      */
+
     public $tableName = null;
+    
+    /**
+     * Old properties values indexed by properties names
+     * @var array|null
+     */
+    private $_oldProperties;
 
     public function events()
     {
@@ -55,6 +67,35 @@ class EavBehavior extends Behavior
             ActiveRecord::EVENT_AFTER_UPDATE => 'afterSave',
             ActiveRecord::EVENT_AFTER_DELETE => 'afterDelete',
         ];
+    }
+    
+    /**
+     * Sets the old properties values.
+     */
+    public function setOldProperties($values)
+    {
+        $this->_oldProperties = $values;
+    }
+
+    /**
+     * Returns the propertie values that have been modified since they are loaded or saved most recently.
+     * @return array the changed propertie values (name-value pairs)
+     */
+    public function getDirtyProperties()
+    {
+        $properties = [];
+        if ($this->_oldProperties === null) {
+            foreach ($this->properties as $name => $value) {
+                $properties[$name] = $value;
+            }
+        } else {
+            foreach ($this->properties as $name => $value) {
+                if (!array_key_exists($name, $this->_oldProperties) || $value !== $this->_oldProperties[$name]) {
+                    $properties[$name] = $value;
+                }
+            }
+        }
+        return $properties;
     }
 
     /**
@@ -75,6 +116,7 @@ class EavBehavior extends Behavior
                 $this->properties->{$property['name']} = $property['value'];
             }
         } 
+        $this-> setOldProperties($this->properties->getArrayCopy());
     }
 
     /**
@@ -117,6 +159,7 @@ class EavBehavior extends Behavior
     {
         $this->deleteAll();
     } 
+
     /**
      * Replace properties from array
      */
