@@ -78,6 +78,14 @@ class EavBehavior extends Behavior
     }
 
     /**
+     * Get the old properties values.
+     */
+    public function getOldProperties($values)
+    {
+        return $this->_oldProperties;
+    }
+    
+    /**
      * Returns the propertie values that have been modified since they are loaded or saved most recently.
      * @return array the changed propertie values (name-value pairs)
      */
