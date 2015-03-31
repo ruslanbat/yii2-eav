@@ -80,7 +80,7 @@ class EavBehavior extends Behavior
     /**
      * Get the old properties values.
      */
-    public function getOldProperties($values)
+    public function getOldProperties()
     {
         return $this->_oldProperties;
     }
