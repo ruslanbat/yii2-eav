@@ -7,7 +7,6 @@ use Yii;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
 use yii\db\Query;
-use yii\helpers\Json;
 
 /**
  * Class EavBehavior
@@ -21,7 +20,7 @@ class EavBehavior extends Behavior
      * @var object
      */
     public $properties;
-    
+
     /**
      * Primary key for getting extended attributes
      * @var string
@@ -31,19 +30,19 @@ class EavBehavior extends Behavior
     /**
      * Properties key for getting extended attributes
      * @var string
-     */ 
+     */
     public $propertiesKey = 'id';
 
     /**
      * Properties field with attributes name
      * @var string
-     */ 
+     */
     public $propertiesName = 'name';
 
     /**
      * Properties field with attributes value
      * @var string
-     */ 
+     */
     public $propertiesValue = 'value';
 
     /**
@@ -52,7 +51,7 @@ class EavBehavior extends Behavior
      */
 
     public $tableName = null;
-    
+
     /**
      * Old properties values indexed by properties names
      * @var array|null
@@ -68,7 +67,7 @@ class EavBehavior extends Behavior
             ActiveRecord::EVENT_AFTER_DELETE => 'afterDelete',
         ];
     }
-    
+
     /**
      * Sets the old properties values.
      */
@@ -84,7 +83,7 @@ class EavBehavior extends Behavior
     {
         return $this->_oldProperties;
     }
-    
+
     /**
      * Returns the propertie values that have been modified since they are loaded or saved most recently.
      * @return array the changed propertie values (name-value pairs)
@@ -112,7 +111,7 @@ class EavBehavior extends Behavior
     public function afterFind()
     {
         $this->properties = new ArrayObject();
-        $this->properties ->setFlags(ArrayObject::STD_PROP_LIST|ArrayObject::ARRAY_AS_PROPS);
+        $this->properties->setFlags(ArrayObject::STD_PROP_LIST | ArrayObject::ARRAY_AS_PROPS);
 
         $query = new Query();
         $query->select([$this->propertiesName, $this->propertiesValue]);
@@ -120,11 +119,11 @@ class EavBehavior extends Behavior
         $query->where([$this->primaryKey => $this->owner->{$this->primaryKey}]);
 
         foreach ($query->all() as $property) {
-            if(!empty($property['name'])){
-                $this->properties->{$property['name']} = $property['value'];
+            if (!empty($property[$this->propertiesName])) {
+                $this->properties->{$property[$this->propertiesName]} = $property[$this->propertiesValue];
             }
-        } 
-        $this-> setOldProperties($this->properties->getArrayCopy());
+        }
+        $this->setOldProperties($this->properties->getArrayCopy());
     }
 
     /**
@@ -144,7 +143,7 @@ class EavBehavior extends Behavior
     {
         $this->deleteAll();
         $properties = [];
-        if($this->properties){
+        if ($this->properties) {
             foreach ($this->properties as $name => $value) {
                 $properties[] = [
                     $this->propertiesKey => $this->owner->{$this->primaryKey},
@@ -152,10 +151,10 @@ class EavBehavior extends Behavior
                     $this->propertiesValue => $value,
                 ];
             }
-            if($properties){
+            if ($properties) {
                 Yii::$app->db->createCommand()
-                ->batchInsert($this->tableName, [$this->propertiesKey => $this->propertiesKey, $this->propertiesName => $this->propertiesName, $this->propertiesValue => $this->propertiesValue], $properties)
-                ->execute(); 
+                    ->batchInsert($this->tableName, [$this->propertiesKey => $this->propertiesKey, $this->propertiesName => $this->propertiesName, $this->propertiesValue => $this->propertiesValue], $properties)
+                    ->execute();
             }
         }
     }
@@ -166,7 +165,7 @@ class EavBehavior extends Behavior
     public function afterDelete()
     {
         $this->deleteAll();
-    } 
+    }
 
     /**
      * Replace properties from array
@@ -174,6 +173,6 @@ class EavBehavior extends Behavior
     public function replaceProperties($properties)
     {
         $new_properties = array_merge($this->properties->getArrayCopy(), $properties);
-        $this->properties->exchangeArray($new_properties); 
-    }  
+        $this->properties->exchangeArray($new_properties);
+    }
 }
