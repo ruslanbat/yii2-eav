@@ -115,7 +115,7 @@ class EavBehavior extends Behavior
         $this->properties ->setFlags(ArrayObject::STD_PROP_LIST|ArrayObject::ARRAY_AS_PROPS);
 
         $query = new Query();
-        $query->select('name, value');
+        $query->select([$this->propertiesName, $this->propertiesValue]);
         $query->from($this->tableName);
         $query->where([$this->primaryKey => $this->owner->{$this->primaryKey}]);
 
