@@ -201,6 +201,7 @@ class EavBehavior extends Behavior
      */
     public function replaceProperties($properties)
     {
+        $this->getProperties();
         $new_properties = array_merge($this->properties->getArrayCopy(), $properties);
         $this->properties->exchangeArray($new_properties);
     }
