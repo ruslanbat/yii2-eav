@@ -19,7 +19,7 @@ class EavBehavior extends Behavior
      * EAV properties
      * @var object
      */
-    public $properties;
+    private $properties;
 
     /**
      * Primary key for getting extended attributes
@@ -61,7 +61,6 @@ class EavBehavior extends Behavior
     public function events()
     {
         return [
-            ActiveRecord::EVENT_AFTER_FIND => 'afterFind',
             ActiveRecord::EVENT_AFTER_INSERT => 'afterSave',
             ActiveRecord::EVENT_AFTER_UPDATE => 'afterSave',
             ActiveRecord::EVENT_AFTER_DELETE => 'afterDelete',
@@ -92,8 +91,10 @@ class EavBehavior extends Behavior
     {
         $properties = [];
         if ($this->_oldProperties === null) {
-            foreach ($this->properties as $name => $value) {
-                $properties[$name] = $value;
+            if (!empty($this->properties)) {
+                foreach ($this->properties as $name => $value) {
+                    $properties[$name] = $value;
+                }
             }
         } else {
             foreach ($this->properties as $name => $value) {
@@ -104,26 +105,43 @@ class EavBehavior extends Behavior
         }
         return $properties;
     }
-
+    
     /**
-     * Load all EAV of model
+     * Returns the properties values. Load properties on first running.
+     * @return ArrayObject properties
      */
-    public function afterFind()
+    public function getProperties()
     {
-        $this->properties = new ArrayObject();
-        $this->properties->setFlags(ArrayObject::STD_PROP_LIST | ArrayObject::ARRAY_AS_PROPS);
+        if (empty($this->properties)) {
+            $this->properties = new ArrayObject();
+            $this->properties->setFlags(ArrayObject::STD_PROP_LIST | ArrayObject::ARRAY_AS_PROPS);
 
-        $query = new Query();
-        $query->select([$this->propertiesName, $this->propertiesValue]);
-        $query->from($this->tableName);
-        $query->where([$this->primaryKey => $this->owner->{$this->primaryKey}]);
+            $query = new Query();
+            $query->select([$this->propertiesName, $this->propertiesValue]);
+            $query->from($this->tableName);
+            $query->where([$this->primaryKey => $this->owner->{$this->primaryKey}]);
 
-        foreach ($query->all() as $property) {
-            if (!empty($property[$this->propertiesName])) {
-                $this->properties->{$property[$this->propertiesName]} = $property[$this->propertiesValue];
+            foreach ($query->all() as $property) {
+                if (!empty($property[$this->propertiesName])) {
+                    $this->properties->{$property[$this->propertiesName]} = $property[$this->propertiesValue];
+                }
             }
+            $this->setOldProperties($this->properties->getArrayCopy());
         }
-        $this->setOldProperties($this->properties->getArrayCopy());
+        return $this->properties;
+    }
+    
+    /**
+     * Setting the properties values
+     * @param ArrayObject $properties
+     */
+    public function setProperties($properties)
+    {
+        if ($properties instanceof ArrayObject) {
+            $this->properties = $properties;
+        } else {
+            $this->properties = new ArrayObject($properties);
+        }
     }
 
     /**
@@ -141,22 +159,33 @@ class EavBehavior extends Behavior
      */
     public function afterSave()
     {
-        $this->deleteAll();
-        $properties = [];
-        if ($this->properties) {
-            foreach ($this->properties as $name => $value) {
-                $properties[] = [
-                    $this->propertiesKey => $this->owner->{$this->primaryKey},
-                    $this->propertiesName => $name,
-                    $this->propertiesValue => $value,
-                ];
-            }
-            if ($properties) {
-                Yii::$app->db->createCommand()
-                    ->batchInsert($this->tableName, [$this->propertiesKey => $this->propertiesKey, $this->propertiesName => $this->propertiesName, $this->propertiesValue => $this->propertiesValue], $properties)
-                    ->execute();
-            }
+        $dirtyProperties = $this->dirtyProperties;
+        if (empty($dirtyProperties)) {
+            return;
         }
+        
+        Yii::$app->db->createCommand()
+            ->delete($this->tableName, [
+                $this->primaryKey => $this->owner->{$this->primaryKey},
+                $this->propertiesName => array_keys($dirtyProperties),
+            ])
+            ->execute();
+        
+        $properties = [];
+        foreach ($dirtyProperties as $name => $value) {
+            $properties[] = [
+                $this->owner->{$this->primaryKey},
+                $name,
+                $value,
+            ];
+        }
+        Yii::$app->db->createCommand()
+            ->batchInsert($this->tableName, [
+                $this->propertiesKey,
+                $this->propertiesName,
+                $this->propertiesValue
+            ], $properties)
+            ->execute();
     }
 
     /**
@@ -172,6 +201,7 @@ class EavBehavior extends Behavior
      */
     public function replaceProperties($properties)
     {
+        $this->getProperties();
         $new_properties = array_merge($this->properties->getArrayCopy(), $properties);
         $this->properties->exchangeArray($new_properties);
     }
