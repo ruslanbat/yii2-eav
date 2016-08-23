@@ -58,6 +58,11 @@ class EavBehavior extends Behavior
      */
     private $_oldProperties;
 
+    public function init(){
+        $this->properties  = new ArrayObject();
+        return parent::init();
+    }
+
     public function events()
     {
         return [
