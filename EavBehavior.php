@@ -137,10 +137,10 @@ class EavBehavior extends Behavior
      */
     public function setProperties($properties)
     {
-        if ($properties instanceof ArrayObject) {
-            $this->properties = $properties;
-        } else {
+        if (is_array($properties)) {
             $this->properties = new ArrayObject($properties);
+        } else {
+            $this->properties = $properties;
         }
     }
 
